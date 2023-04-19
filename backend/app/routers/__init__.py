@@ -1,2 +1,4 @@
 from .test import router
-__all__ = ['test']
+from .users import router
+from .messages import router
+__all__ = ['test', "users", "messages"]

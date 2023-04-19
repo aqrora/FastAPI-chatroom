@@ -4,6 +4,16 @@ from sqlalchemy.sql.expression import text
 from sqlalchemy.sql.sqltypes import TIMESTAMP
 
 from database import Base
+import lib
+
+
+class Channel(Bsae):
+    __tablename__ = "channels"
+    id = Column(Integer, primary_key=True, nullable=False)
+
+    messages = relationship("Message", back_populates="channel")
+
+
 
 class User(Base):
     __tablename__ = "users"
@@ -13,16 +23,24 @@ class User(Base):
     avatar = Column(String, nullable=False, default="https://miramarvet.com.au/wp-content/uploads/2021/08/api-cat2.jpg")
     created_at = Column(TIMESTAMP(timezone=True),
                         nullable=False, server_default=text('now()'))
-    
+
     messages = relationship("Message", back_populates="user")
+    
+    def __init__(self, username):
+        self.username = username
+        self.color = lib.generate_random_color()
+        self.avatar = lib.generate_random_cat()
+
 
 class Message(Base):
     __tablename__ = "messages"
     id = Column(Integer, primary_key=True, nullable=False)
     message_text = Column(String(255), nullable=False)
     by_user_id = Column(Integer, ForeignKey("users.id"), nullable=False)
+    channel_id = Column(Integer, ForeignKey("channels.id"), nullable=False)
     created_at = Column(TIMESTAMP(timezone=True),
                         nullable=False, server_default=text('now()'))
     edited = Column(Boolean, nullable=False, default=False)
     
     user = relationship("User", back_populates="messages")
+    channel = relationship("Channel", back_populates="messages")

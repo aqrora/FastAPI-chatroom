@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from routers import test
+from routers import test, users, messages
 import models
 from database import engine
 
@@ -20,6 +20,8 @@ app.add_middleware(
 )
 
 app.include_router(test.router)
+app.include_router(users.router)
+app.include_router(messages.router)
 
 
 @app.get("/")
