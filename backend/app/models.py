@@ -10,7 +10,8 @@ from . import lib
 class Channel(Base):
     __tablename__ = "channels"
     id = Column(Integer, primary_key=True, nullable=False)
-
+    title = Column(String(32), default="No theme", nullable=False)
+    owner = Column(Integer, ForeignKey("users.id"), nullable=False) # Id of user who created this channel
     messages = relationship("Message", back_populates="channel")
 
 
@@ -25,7 +26,8 @@ class User(Base):
                         nullable=False, server_default=text('now()'))
 
     messages = relationship("Message", back_populates="user")
-    
+    channels = relationship("Channel", back_populates="user") # Channels created by user
+
     def __init__(self, username):
         self.username = username
         self.color = lib.generate_random_color()

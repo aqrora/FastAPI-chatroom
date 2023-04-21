@@ -1,6 +1,7 @@
 import requests
 import random
-
+import time
+# import jwt
 
 
 def generate_random_color():
@@ -20,4 +21,9 @@ def generate_random_cat():
             return "https://miramarvet.com.au/wp-content/uploads/2021/08/api-cat2.jpg"
 
 
+def generate_jwt_token(payload):
+    ... # TODO
 
+
+def verify_jwt_token(token):
+    ... # TODO

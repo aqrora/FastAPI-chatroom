@@ -1,11 +1,8 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from routers import test, users, messages
-import models
-from database import engine
+from .routers import users, messages, channels
 
-models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI()
 
@@ -19,9 +16,10 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.include_router(test.router)
+# app.include_router(routers.test)
 app.include_router(users.router)
 app.include_router(messages.router)
+app.include_router(channels.router)
 
 
 @app.get("/")

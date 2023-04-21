@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from database import get_db
-import models, schemas
+from .. import models, schemas
+from ..database import get_db
 
 router = APIRouter(
     prefix="/message",
@@ -12,17 +12,16 @@ router = APIRouter(
 
 
 
-@router.post('/message/{channel_id}')
+@router.post('/{channel_id}')
 def send_message(channel_id: int, db: Session = Depends(get_db)):
     return {"status": "ok"}
 
 
-@router.get('/message/{channel_id}')
+@router.get('/{channel_id}')
 def get_messages(channel_id: int):
     return {"status": "ok"}
 
 
-
-@router.put("/message/{channel_id}/{message_id}")
+@router.put("/{channel_id}/{message_id}")
 def edit_message(channel_id: int, message_id: int):
     return {"status": "ok"}
