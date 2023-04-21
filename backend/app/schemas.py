@@ -5,10 +5,8 @@ from typing import Optional
 
 
 class UserIn(BaseModel):
+    # TODO add password
     username: str
-
-
-
 
 class UserOut(UserIn):
     id: int
@@ -32,5 +30,14 @@ class MessageOut(MessageIn):
     edited: bool
 
     
+    class Config:
+        orm_mode = True
+
+class ChannelIn(BaseModel):
+    title: str
+    owner: int
+
+class ChannelOut(ChannelIn):
+    id: int
     class Config:
         orm_mode = True

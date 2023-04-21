@@ -12,22 +12,24 @@ class Channel(Base):
     id = Column(Integer, primary_key=True, nullable=False)
     title = Column(String(32), default="No theme", nullable=False)
     owner = Column(Integer, ForeignKey("users.id"), nullable=False) # Id of user who created this channel
+
+    user = relationship("User", backref="channels")
     messages = relationship("Message", back_populates="channel")
-
-
+    
 
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, nullable=False)
     username = Column(String, nullable=False)
+    # TODO add password
     color = Column(String(7), nullable=False, default = '#000000')
     avatar = Column(String, nullable=False, default="https://miramarvet.com.au/wp-content/uploads/2021/08/api-cat2.jpg")
     created_at = Column(TIMESTAMP(timezone=True),
                         nullable=False, server_default=text('now()'))
 
     messages = relationship("Message", back_populates="user")
-    channels = relationship("Channel", back_populates="user") # Channels created by user
-
+    
+    
     def __init__(self, username):
         self.username = username
         self.color = lib.generate_random_color()
