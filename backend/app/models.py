@@ -2,12 +2,12 @@ from sqlalchemy import Column, Integer, String, Boolean, ForeignKey, text
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.sql.expression import text
 from sqlalchemy.sql.sqltypes import TIMESTAMP
+from .database import Base
+from . import lib
 
-from database import Base
-import lib
 
 
-class Channel(Bsae):
+class Channel(Base):
     __tablename__ = "channels"
     id = Column(Integer, primary_key=True, nullable=False)
 
