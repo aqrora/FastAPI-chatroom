@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from .. import models, schemas
 from ..database import get_db
 from ..utils import Generate
+from ..oauth2 import JWTToken
 
 router = APIRouter(
     prefix="/user",
@@ -14,7 +15,7 @@ router = APIRouter(
 
 @router.post("/", status_code=status.HTTP_201_CREATED, response_model=schemas.UserOut)
 def create_user(user: schemas.UserIn, db: Session = Depends(get_db)):
-    # Check for username in database (is exists)
+    
     is_exists = db.query(models.User).filter(models.User.username == user.username).first()
     if is_exists:
         raise HTTPException(status_code=status.HTTP_409_CONFLICT,
@@ -31,9 +32,13 @@ def create_user(user: schemas.UserIn, db: Session = Depends(get_db)):
 
 
 @router.delete("/{user_id}", status_code = status.HTTP_204_NO_CONTENT)
-def delete_user(user_id: int, db: Session = Depends(get_db)): 
+def delete_user(user_id: int, db: Session = Depends(get_db), current_user: int = Depends(JWTToken.get_current_user)): 
 
-    # TODO Check for current user, check user.id == id
+
+    if current_user.id != user_id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail="Not authorized to perform requested action")
+    
     
     user_query = db.query(models.User).filter(models.User.id == user_id)
     user = user_query.first()
