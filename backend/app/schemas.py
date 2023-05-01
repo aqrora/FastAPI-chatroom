@@ -5,15 +5,16 @@ from typing import Optional
 
 
 class UserIn(BaseModel):
-    # TODO add password
     username: str
+    password: str
 
-class UserOut(UserIn):
+
+class UserOut(BaseModel):
     id: int
     username: str
     color: str
     avatar: str
-    created_at: str
+    created_at: datetime
 
     class Config:
         orm_mode = True
@@ -41,3 +42,11 @@ class ChannelOut(ChannelIn):
     id: int
     class Config:
         orm_mode = True
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+
+class TokenData(BaseModel):
+    id: Optional[str] = None

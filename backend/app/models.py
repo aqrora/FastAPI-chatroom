@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship, backref
 from sqlalchemy.sql.expression import text
 from sqlalchemy.sql.sqltypes import TIMESTAMP
 from .database import Base
-from . import lib
+from . import utils
 
 
 
@@ -21,7 +21,7 @@ class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, nullable=False)
     username = Column(String, nullable=False)
-    # TODO add password
+    password = Column(String, nullable=False)
     color = Column(String(7), nullable=False, default = '#000000')
     avatar = Column(String, nullable=False, default="https://miramarvet.com.au/wp-content/uploads/2021/08/api-cat2.jpg")
     created_at = Column(TIMESTAMP(timezone=True),
@@ -30,10 +30,11 @@ class User(Base):
     messages = relationship("Message", back_populates="user")
     
     
-    def __init__(self, username):
+    def __init__(self, username, password):
         self.username = username
-        self.color = lib.generate_random_color()
-        self.avatar = lib.generate_random_cat()
+        self.password = password
+        self.color = utils.Generate.random_color()
+        self.avatar = utils.Generate.random_cat()
 
 
 class Message(Base):

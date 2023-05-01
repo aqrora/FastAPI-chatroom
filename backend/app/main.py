@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
-from .routers import users, messages, channels
+from .routers import auth, users, messages, channels
 
 
 app = FastAPI()
@@ -20,7 +20,7 @@ app.add_middleware(
 app.include_router(users.router)
 app.include_router(messages.router)
 app.include_router(channels.router)
-
+app.include_router(auth.router)
 
 @app.get("/")
 def root():
