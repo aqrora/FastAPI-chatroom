@@ -49,3 +49,9 @@ class Message(Base):
     
     user = relationship("User", back_populates="messages")
     channel = relationship("Channel", back_populates="messages")
+
+    def __init__(self, message_text: str, by_user_id: int, channel_id: int):
+        self.message_text = message_text
+        self.by_user_id = by_user_id
+        self.channel_id = channel_id
+        

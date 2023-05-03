@@ -22,14 +22,11 @@ class UserOut(BaseModel):
 
 class MessageIn(BaseModel):
     message_text: str
-    by_user_id: int
-    channel_id: int
 
 class MessageOut(MessageIn):
-    id: int
     created_at: datetime
     edited: bool
-
+    by_user_id: int
     
     class Config:
         orm_mode = True
