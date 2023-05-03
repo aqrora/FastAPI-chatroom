@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status, Response
 from sqlalchemy.orm import Session
 from typing import List
 from .. import models, schemas
@@ -42,22 +42,44 @@ def get_messages(channel_id: int, db: Session = Depends(get_db)):
 
 
 
-@router.put("/{channel_id}/{message_id}", response_model=schemas.MessageOut)
-def update_message(channel_id: int, message_id: int, updated_message: schemas.MessageIn,
+
+
+
+@router.put("/{message_id}", response_model=schemas.MessageOut)
+def update_message(message_id: int, updated_message: schemas.MessageIn,
                    current_user: int = Depends(JWTToken.get_current_user), db: Session = Depends(get_db)):
     # TODO websocket call
     message_query = db.query(models.Message).filter(models.Message.id == message_id)
-
     message = message_query.first()
 
     if message == None:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"Message with id: {message_id} does not exist")
-    if message.owner_id != current_user.id:
+    if message.by_user_id != current_user.id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail="Not authorized to perform requested action")
+    
     message.message_text = updated_message.message_text
     message.edited = True
     db.commit()
 
     return message_query.first()
+
+
+@router.delete("/{message_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_message(message_id: int, current_user: int = Depends(JWTToken.get_current_user), 
+                   db: Session = Depends(get_db)):
+    message_query = db.query(models.Message).filter(models.Message.id == message_id)
+    message = message_query.first()
+
+    if message == None:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                            detail=f"Message with id: {message_id} does not exist")
+    if message.by_user_id != current_user.id:
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
+                            detail="Not authorized to perform requested action")
+    
+    message_query.delete(synchronize_session=False)
+    db.commit()
+
+    return Response(status_code=status.HTTP_204_NO_CONTENT)
