@@ -17,6 +17,8 @@ class Channel(Base):
     messages = relationship("Message", back_populates="channel")
     
 
+
+
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True, nullable=False)

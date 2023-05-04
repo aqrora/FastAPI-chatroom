@@ -1,9 +1,9 @@
 from fastapi import APIRouter, Depends, HTTPException, status, Response
 from sqlalchemy.orm import Session
-from typing import List
 from .. import models, schemas
 from ..database import get_db
 from ..oauth2 import JWTToken
+from typing import List
 
 router = APIRouter(
     prefix="/message",
