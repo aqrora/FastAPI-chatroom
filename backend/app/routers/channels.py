@@ -26,18 +26,16 @@ def get_channels(current_user: int = Depends(JWTToken.get_current_user),
 def create_channel(channel: schemas.ChannelIn, current_user: int = Depends(JWTToken.get_current_user),
                    db: Session = Depends(get_db)):
     # TODO validation
-    channel = models.Channel(**channel.dict())
-    db.add(channel)
-    db.commit()
-    db.refresh(channel)
-    return channel
+    channel_query = Query(db = db, model = models.Channel)
+    
+    return channel_query.create(**channel.dict())
 
 
 
 @router.delete('/{channel_id}')
 def delete_channel(channel_id: int, current_user: int = Depends(JWTToken.get_current_user), 
                    db: Session = Depends(get_db)):
-    channel_query = db.query(models.Channel).filter(models.Channel.id == channel_id)
+    channel_query = Query(db = db, model = models.Channel, id = channel_id)
     channel = channel_query.first()
 
     if channel == None:
@@ -47,7 +45,6 @@ def delete_channel(channel_id: int, current_user: int = Depends(JWTToken.get_cur
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail="Not authorized to perform requested action")
     
-    channel_query.delete(synchronize_session=False)
-    db.commit()
+    channel_query.delete()
 
     return Response(status_code=status.HTTP_204_NO_CONTENT)
