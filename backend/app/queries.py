@@ -4,7 +4,7 @@ from sqlalchemy.orm import Session
 
 
 class Query():
-    def __init__(*, self, db: Session, model, id: int = None):
+    def __init__(self, db: Session, model, id: int = None):
         self.db = db
         self.model = model
         self.id = None
