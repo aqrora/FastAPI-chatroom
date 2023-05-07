@@ -37,11 +37,6 @@ def delete_channel(channel_id: int, current_user: int = Depends(JWTToken.get_cur
                    db: Session = Depends(get_db)):
     channel_query = Query(db = db, model = models.Channel, id = channel_id)
     channel = channel_query.first()
-
-    if channel == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"Channel with id: {channel_id} does not exist")
-                            
     if channel.owner != current_user.id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail="Not authorized to perform requested action")

@@ -19,7 +19,7 @@ class Query():
         self.db.refresh(new_model)
         return new_model
 
-    def get_item(self):
+    def get_item(self): # (returns query)
         assert self.id is not None, "Can't find item because ID wasn't specified"
         return self.db.query(self.model).filter(self.model.id == self.id)
 
@@ -29,9 +29,12 @@ class Query():
                     detail=f"{self.model.__tablename__[:-1].title()} with id: {self.id} does not exist")
         
 
-    def delete(self):
+    def validate_existance(self):
         if not self.get_item().first():
             self.generate_notfound_exception()
+
+    def delete(self):
+        self.validate_existance()
 
         self.get_item().delete(synchronize_session=False)
         self.db.commit()

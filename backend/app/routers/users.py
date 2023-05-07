@@ -29,8 +29,8 @@ def create_user(user: schemas.UserIn, db: Session = Depends(get_db)):
 
 @router.delete("/{user_id}", status_code = status.HTTP_204_NO_CONTENT)
 def delete_user(user_id: int, db: Session = Depends(get_db), current_user: int = Depends(JWTToken.get_current_user)): 
-
-
+    
+    
     if current_user.id != user_id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail="Not authorized to perform requested action")

@@ -27,13 +27,8 @@ def send_message(channel_id: int, message: schemas.MessageIn, current_user: int 
 
 @router.get('/{channel_id}', response_model=List[schemas.MessageOut])
 def get_messages(channel_id: int, db: Session = Depends(get_db)):
-    channel = db.query(models.Channel).filter(
-        models.Channel.id == channel_id
-        ).first()
-    
-    if not channel:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"Channel with id: {channel_id} does not exist")
+    channel_query = Query(db = db, model = models.Channel, id = channel_id)
+    channel_query.validate_existance()
 
     messages = db.query(models.Message).filter(models.Message.channel_id == channel_id).all()
 
@@ -48,12 +43,11 @@ def get_messages(channel_id: int, db: Session = Depends(get_db)):
 def update_message(message_id: int, updated_message: schemas.MessageIn,
                    current_user: int = Depends(JWTToken.get_current_user), db: Session = Depends(get_db)):
     # TODO websocket call
-    message_query = db.query(models.Message).filter(models.Message.id == message_id)
-    message = message_query.first()
+    message_query = Query(db = db, model = models.Message, id = message_id)
+    message = message_query.get_item().first()
 
-    if message == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"Message with id: {message_id} does not exist")
+    message_query.validate_existance() # Returns 404 if message with this id does not exists
+
     if message.by_user_id != current_user.id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail="Not authorized to perform requested action")
@@ -70,6 +64,7 @@ def delete_message(message_id: int, current_user: int = Depends(JWTToken.get_cur
                    db: Session = Depends(get_db)):
 
     message_query = Query(db = db, model = models.Message, id = message_id)
+    message = message_query.first()
     if message.by_user_id != current_user.id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail="Not authorized to perform requested action")
