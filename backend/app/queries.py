@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-
+from fastapi import status, HTTPException
 
 
 
@@ -23,6 +23,15 @@ class Query():
         assert self.id is not None, "Can't find item because ID wasn't specified"
         return self.db.query(self.model).filter(self.model.id == self.id)
 
+
+    def generate_notfound_exception(self):
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"{self.model.__tablename__[:-1].title()} with id: {self.id} does not exist")
+        
+
     def delete(self):
+        if not self.get_item().first():
+            self.generate_notfound_exception()
+
         self.get_item().delete(synchronize_session=False)
         self.db.commit()

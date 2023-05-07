@@ -37,9 +37,6 @@ def delete_user(user_id: int, db: Session = Depends(get_db), current_user: int =
     
     
     user_query = Query(db = db, model = models.User, id = user_id)
-    user = user_query.get_item().first()
-    if not user: raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"User with id: {user_id} does not exist")
     user_query.delete()
 
     return Response(status_code=status.HTTP_204_NO_CONTENT)

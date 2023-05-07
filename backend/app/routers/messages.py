@@ -34,7 +34,7 @@ def get_messages(channel_id: int, db: Session = Depends(get_db)):
     if not channel:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
                             detail=f"Channel with id: {channel_id} does not exist")
-                            
+
     messages = db.query(models.Message).filter(models.Message.channel_id == channel_id).all()
 
     return {"messages": messages}
@@ -70,12 +70,6 @@ def delete_message(message_id: int, current_user: int = Depends(JWTToken.get_cur
                    db: Session = Depends(get_db)):
 
     message_query = Query(db = db, model = models.Message, id = message_id)
-    # message_query = db.query(models.Message).filter(models.Message.id == message_id)
-    message = message_query.get_item().first()
-
-    if message == None:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,
-                            detail=f"Message with id: {message_id} does not exist")
     if message.by_user_id != current_user.id:
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN,
                             detail="Not authorized to perform requested action")
