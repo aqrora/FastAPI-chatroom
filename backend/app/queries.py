@@ -7,9 +7,10 @@ class Query():
     def __init__(*, self, db: Session, model, id: int = None):
         self.db = db
         self.model = model
+        self.id = None
         if id is not None:
             self.id = id
-        
+
 
     def create(self, **kwargs):
         new_model = self.model(**kwargs)
@@ -19,7 +20,7 @@ class Query():
         return new_model
 
     def get_item(self):
-        assert self.id is not None, "Can't find item because id wasn't specified"
+        assert self.id is not None, "Can't find item because ID wasn't specified"
         return self.db.query(self.model).filter(self.model.id == self.id)
 
     def delete(self):
